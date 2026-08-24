@@ -1,0 +1,484 @@
+/* ========== 全局样式与主题变量 ========== */
+
+:root {
+  --c-bg: #f5f7fa;
+  --c-card: #ffffff;
+  --c-text: #303133;
+  --c-text-secondary: #909399;
+  --c-border: #e4e7ed;
+  --c-primary: #409eff;
+  --c-success: #67c23a;
+  --c-danger: #f56c6c;
+  --c-warning: #e6a23c;
+  --c-nav-height: 56px;
+  --c-radius: 4px;
+}
+
+html.dark {
+  --c-bg: #141414;
+  --c-card: #1d1e1f;
+  --c-text: #e5eaf3;
+  --c-text-secondary: #8d9095;
+  --c-border: #363637;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s, color 0.25s;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* 主区域：桌面端为顶部导航让位 */
+.app-main {
+  margin: 0 auto;
+  padding: calc(var(--c-nav-height) + 16px) 16px 16px;
+}
+
+/* 沉浸式页面（卡片学习页）：全屏、无导航让位 */
+.app-main.immersive {
+  padding: 0;
+}
+
+/* ========== 顶部 / 底部导航 ========== */
+
+.app-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--c-nav-height);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px;
+  background: var(--c-card);
+  border-bottom: 1px solid var(--c-border);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.brand {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--c-primary);
+  margin-right: 24px;
+  white-space: nowrap;
+}
+
+.brand span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--c-text-secondary);
+  margin-left: 4px;
+}
+
+.app-nav .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 16px;
+  color: var(--c-text);
+  text-decoration: none;
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.app-nav .nav-item.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+}
+
+/* ========== 字号偏好（卡片正背面 / 列表摘要） ========== */
+
+.font-small .flash-content,
+.font-small .rich-text {
+  font-size: 14px;
+}
+
+.font-standard .flash-content,
+.font-standard .rich-text {
+  font-size: 16px;
+}
+
+.font-large .flash-content,
+.font-large .rich-text {
+  font-size: 19px;
+}
+
+/* ========== 通用卡片与页面 ========== */
+
+.app-content {
+  width: 60vw;
+  min-width: 720px;
+  margin: 0 auto;
+}
+
+.page-card {
+  margin-bottom: 16px;
+  border-radius: var(--c-radius);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card-title .title-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.muted {
+  display: flex;
+  align-items: center;
+  color: var(--c-text-secondary);
+  font-size: 13px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 12px 4px;
+  border-radius: var(--c-radius);
+  background: var(--c-bg);
+}
+
+.stat-item .num {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--c-primary);
+}
+
+.stat-item .label {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--c-text-secondary);
+}
+
+/* ========== 富文本展示 ========== */
+
+.rich-text {
+  line-height: 1.8;
+  word-break: break-word;
+}
+
+.rich-text img {
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.rich-text p {
+  margin: 0 0 6px;
+}
+
+/* ========== 富文本编辑器 ========== */
+
+.rich-editor .ql-toolbar {
+  border-radius: 8px 8px 0 0;
+  border-color: var(--c-border);
+}
+
+.rich-editor .ql-container {
+  border-radius: 0 0 8px 8px;
+  border-color: var(--c-border);
+  font-size: 14px;
+  min-height: 120px;
+  background: var(--c-card);
+  color: var(--c-text);
+}
+
+.rich-editor .ql-editor {
+  min-height: 120px;
+}
+
+.rich-editor .ql-editor.ql-blank::before {
+  color: var(--c-text-secondary);
+}
+
+html.dark .rich-editor .ql-toolbar {
+  background: #262727;
+}
+
+html.dark .rich-editor .ql-toolbar .ql-stroke {
+  stroke: #cfd3dc;
+}
+
+html.dark .rich-editor .ql-toolbar .ql-fill {
+  fill: #cfd3dc;
+}
+
+html.dark .rich-editor .ql-toolbar .ql-picker {
+  color: #cfd3dc;
+}
+
+/* ========== 首页卡片列表 ========== */
+
+.card-summary {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-line {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-line .side-label {
+  color: var(--c-text-secondary);
+  margin-right: 6px;
+}
+
+.card-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  background: var(--c-card);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.card-list-item:hover {
+  border-color: var(--c-primary);
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.12);
+}
+
+.card-list-item .card-no {
+  flex: none;
+  width: 140px;
+  font-size: 12px;
+  color: var(--c-text-secondary);
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-list-item .card-summary {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-list-item .summary-line {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-list-item .summary-line .side-label {
+  color: var(--c-text-secondary);
+  margin-right: 6px;
+}
+
+/* ========== 卡片学习页（全屏沉浸式） ========== */
+
+.study-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--c-bg);
+}
+
+.study-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--c-nav-height);
+  padding: 0 8px;
+  background: var(--c-card);
+  border-bottom: 1px solid var(--c-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.study-top .timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.study-top .progress {
+  color: var(--c-text-secondary);
+  font-size: 13px;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.study-top .spacer {
+  flex: 1;
+}
+
+.study-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+}
+
+.flash-card {
+  width: 100%;
+  max-width: 760px;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--c-radius);
+  padding: 24px;
+  min-height: 220px;
+  user-select: none;
+}
+
+.flash-card .side-tag {
+  font-size: 12px;
+  color: var(--c-text-secondary);
+  margin-bottom: 8px;
+}
+
+.flash-divider {
+  border: none;
+  border-top: 1px dashed var(--c-border);
+  margin: 16px 0;
+}
+
+.study-actions {
+  width: 100%;
+  max-width: 760px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rate-btn {
+  min-width: 96px;
+}
+
+.study-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px 16px;
+}
+
+.study-done .done-text {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* ========== 移动端自适应（>=375px） ========== */
+
+@media (max-width: 768px) {
+  .app-main {
+    padding: 16px 16px calc(var(--c-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+  }
+
+  .app-main.immersive {
+    padding: 0;
+  }
+
+  /* 导航栏固定在页面最下端 */
+  .app-nav {
+    top: auto;
+    bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--c-border);
+    padding: 0 4px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    justify-content: space-around;
+  }
+
+  .app-nav .brand {
+    display: none;
+  }
+
+  .app-nav .nav-item {
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    padding: 0 10px;
+    border-bottom: none;
+    border-top: 2px solid transparent;
+  }
+
+  .app-nav .nav-item.active {
+    border-top-color: var(--c-primary);
+    border-bottom-color: transparent;
+  }
+
+  .app-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-list-item .card-no {
+    width: 100px;
+  }
+
+  /* 答题页全屏沉浸式 */
+  .study-body {
+    padding: 12px;
+  }
+
+  .flash-card {
+    padding: 16px;
+  }
+
+  .rate-btn {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .card-form-dialog {
+    width: 94vw !important;
+  }
+}
