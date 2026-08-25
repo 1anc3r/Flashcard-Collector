@@ -21,6 +21,7 @@ const emit = defineEmits<{
 }>()
 
 const deckStore = useDeckStore()
+const isMobile = ref(window.innerWidth <= 768)
 
 const visible = computed({
   get: () => props.modelValue,
@@ -87,7 +88,8 @@ async function save(): Promise<void> {
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="dialogTitle" width="92%" :close-on-click-modal="false" top="3vh" style="padding: 20px;"
+  <el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false" top="3vh" 
+    :style="{ padding: '20px', width: isMobile ? '92%' : '60vw' }"
     class="card-form-dialog"
     destroy-on-close>
     <el-form label-width="90px">
