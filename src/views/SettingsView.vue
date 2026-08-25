@@ -7,6 +7,7 @@
  * (4) 导入导出：导出牌组 / 备份全站数据 / 导入牌组 / 恢复备份。
  */
 import { computed, onMounted, ref } from 'vue'
+import { Link } from '@element-plus/icons-vue'
 import { useDeckStore } from '@/stores/deck'
 import { useSessionStore } from '@/stores/session'
 import { useSettingsStore } from '@/stores/settings'
@@ -144,6 +145,12 @@ async function onClearCache(): Promise<void> {
   ElMessage.success('缓存已清理，即将刷新页面')
   window.setTimeout(() => window.location.reload(), 800)
 }
+
+/* ---------- 外链跳转 ---------- */
+
+const redirectToExternalLink = () => {
+  window.location.href = 'https://1anc3r.github.io/Quizor/#/';
+};
 </script>
 
 <template>
@@ -234,6 +241,12 @@ async function onClearCache(): Promise<void> {
       <el-alert type="warning" :closable="false" show-icon style="margin-top: 12px">
         将清空本浏览器 localStorage 中保存的全部应用数据（牌组编辑与本地新增牌组、错题本、收藏夹、做题记录、未完成会话与所有设置），清理后自动刷新页面，且不可恢复。
       </el-alert>
+    </el-card>
+
+    <!-- 外链跳转 -->
+    <el-card class="page-card" shadow="never">
+      <div class="card-title"><span class="title-text">外链跳转</span></div>
+      <el-button type="primary" plain :icon="Link" @click="redirectToExternalLink">跳转到 Quizor · 做题家</el-button>
     </el-card>
   </div>
 </template>
