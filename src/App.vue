@@ -6,6 +6,7 @@
  */
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import AppNav from '@/components/AppNav.vue'
 import { useSettingsStore } from '@/stores/settings'
 import { useDeckStore } from '@/stores/deck'
@@ -25,8 +26,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppNav v-if="!immersive" />
-  <main class="app-main" :class="{ immersive }">
-    <router-view />
-  </main>
+  <el-config-provider :locale="zhCn">
+    <AppNav v-if="!immersive" />
+    <main class="app-main" :class="{ immersive }">
+      <router-view />
+    </main>
+  </el-config-provider>
 </template>
