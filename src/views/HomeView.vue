@@ -45,15 +45,30 @@ const filteredCards = computed<Card[]>(() => {
   })
 })
 
+/* ---- 分页 ---- */
+const cardPage = ref(1)
+const cardPageSize = ref(20)
+
+const pagedCards = computed<Card[]>(() => {
+  const start = (cardPage.value - 1) * cardPageSize.value
+  return filteredCards.value.slice(start, start + cardPageSize.value)
+})
+
+// 关键字 / 每页条数变化时回到第一页
+watch([keyword, cardPageSize], () => {
+  cardPage.value = 1
+})
+
 /** 当前牌组的未完成会话（存在未评分卡片即视为未完成） */
 const unfinishedSession = computed(() =>
   currentDeck.value ? sessionStore.findUnfinished(currentDeck.value.id) : null
 )
 
-// 切换牌组时确保牌组内容已加载
+// 切换牌组时确保牌组内容已加载，并回到第一页
 watch(
   () => deckStore.currentDeckId,
   (id) => {
+    cardPage.value = 1
     if (id) void deckStore.ensureDeckLoaded(id)
   },
   { immediate: true }
@@ -183,7 +198,7 @@ onMounted(async () => {
           :prefix-icon="Search"
           style="margin: 12px 0"
         />
-        <el-table stripe :data="filteredCards">
+        <el-table stripe :data="pagedCards">
             <el-table-column label="卡号" width="80">
               <template #default="{ row }">
                 <span
@@ -210,6 +225,9 @@ onMounted(async () => {
               </template>
             </el-table-column>
         </el-table>
+        <el-pagination v-model:current-page="cardPage" v-model:page-size="cardPageSize"
+          :page-sizes="[20, 50, 100]" :total="filteredCards.length" :hide-on-single-page="true"
+          layout="total, sizes, prev, pager, next, jumper" style="margin-top: 12px;" />
       </el-card>
     </template>
 

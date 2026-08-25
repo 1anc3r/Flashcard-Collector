@@ -4,7 +4,7 @@
  * - 支持展开 / 折叠查看学习明细：卡号、正面（纯文本摘要）、背面（纯文本摘要）、熟练度；
  * - 列表按最近学习 / 评分时间倒序排列（未学习的卡片排在最后）。
  */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useDeckStore } from '@/stores/deck'
 import { PROFICIENCY_META } from '@/utils/sm2'
 import { summarize } from '@/utils/text'
@@ -27,6 +27,20 @@ const records = computed<Card[]>(() => {
 })
 
 const ratedCount = computed(() => records.value.filter((c) => c.lastReviewedAt).length)
+
+/* ---- 分页 ---- */
+const recordPage = ref(1)
+const recordPageSize = ref(20)
+
+const pagedRecords = computed<Card[]>(() => {
+  const start = (recordPage.value - 1) * recordPageSize.value
+  return records.value.slice(start, start + recordPageSize.value)
+})
+
+// 每页条数 / 牌组变化时回到第一页
+watch([recordPageSize, () => deckStore.currentDeckId], () => {
+  recordPage.value = 1
+})
 
 onMounted(async () => {
   if (!deckStore.manifestLoaded) await deckStore.init()
@@ -60,7 +74,7 @@ function onResize(): void {
       <el-empty v-if="records.length === 0" description="当前牌组暂无卡片" :image-size="80" />
 
       <el-collapse v-else style="margin-top: 12px">
-        <el-collapse-item v-for="card in records" :key="card.id" :name="card.id">
+        <el-collapse-item v-for="card in pagedRecords" :key="card.id" :name="card.id">
           <template #title>
             <div
               style="
@@ -125,6 +139,9 @@ function onResize(): void {
           </div>
         </el-collapse-item>
       </el-collapse>
+      <el-pagination v-model:current-page="recordPage" v-model:page-size="recordPageSize"
+        :page-sizes="[20, 50, 100]" :total="records.length" :hide-on-single-page="true"
+        layout="total, sizes, prev, pager, next, jumper" style="margin-top: 12px;" />
     </el-card>
   </div>
 </template>

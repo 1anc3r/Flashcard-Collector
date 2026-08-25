@@ -29,6 +29,20 @@ const savingDeck = ref(false)
 const keyword = ref('')
 const selectedCards = ref<Card[]>([])
 
+/* ---- 分页 ---- */
+const cardPage = ref(1)
+const cardPageSize = ref(20)
+
+const pagedCards = computed<Card[]>(() => {
+  const start = (cardPage.value - 1) * cardPageSize.value
+  return filteredCards.value.slice(start, start + cardPageSize.value)
+})
+
+// 关键字 / 每页条数 / 牌组变化时回到第一页
+watch([keyword, cardPageSize, deckId], () => {
+  cardPage.value = 1
+})
+
 const cards = computed<Card[]>(() => (deckId.value ? deckStore.getCards(deckId.value) : []))
 
 const filteredCards = computed<Card[]>(() => {
@@ -223,9 +237,8 @@ async function deleteCardBatch(): Promise<void> {
         批量删除（{{ selectedCards.length }}）
       </el-button>
       <el-table
-        :data="filteredCards"
+        :data="pagedCards"
         style="width: 100%"
-        max-height="520"
         @selection-change="(rows: Card[]) => (selectedCards = rows)"
       >
         <el-table-column type="selection" width="44" />
@@ -275,6 +288,9 @@ async function deleteCardBatch(): Promise<void> {
           <el-empty description="暂无卡片，点击右上角「新增」创建第一张卡片" :image-size="80" />
         </template>
       </el-table>
+      <el-pagination v-model:current-page="cardPage" v-model:page-size="cardPageSize"
+        :page-sizes="[20, 50, 100]" :total="filteredCards.length" :hide-on-single-page="true"
+        layout="total, sizes, prev, pager, next, jumper" style="margin-top: 12px;" />
     </el-card>
 
     <CardFormDialog
