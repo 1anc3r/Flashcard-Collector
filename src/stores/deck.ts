@@ -36,6 +36,9 @@ function normalizeStaticCard(raw: Partial<StaticCard>, fallbackId: string): Stat
   }
 }
 
+/** manifest 初始化的并发去重：多个调用方（App onMounted、各页面 immediate watcher）共享同一次加载 */
+let manifestPromise: Promise<void> | null = null
+
 export const useDeckStore = defineStore('decks', {
   state: (): DeckState => ({
     manifestLoaded: false,
@@ -72,35 +75,43 @@ export const useDeckStore = defineStore('decks', {
   },
 
   actions: {
-    /** 应用启动：加载 DeckManifest 并合并用户牌组 */
+    /** 应用启动：加载 DeckManifest 并合并用户牌组（并发调用共享同一次加载，可安全重复调用） */
     async init(): Promise<void> {
       if (this.manifestLoaded) return
-      this.loading = true
-      this.error = ''
-      try {
-        const manifest = await fetchManifest()
-        this.staticDecks = (manifest.decks ?? []).map((d) => ({
-          id: String(d.id),
-          name: String(d.name),
-          deckFile: String(d.deckFile),
-          cardCount: Number(d.cardCount ?? 0),
-          isUserCreated: false
-        }))
-        // 清理 userDecks 中与静态牌组重复的 ID（以静态为准的场景不会出现，防御性处理）
-        const staticIds = new Set(this.staticDecks.map((d) => d.id))
-        this.userDecks = this.userDecks.filter((d) => !staticIds.has(d.id))
-        this.manifestLoaded = true
-        // 选定当前牌组
-        if (!this.currentDeckId || !this.allDecks.some((d) => d.id === this.currentDeckId)) {
-          this.setCurrentDeck(this.allDecks[0]?.id ?? '')
-        }
-        // 预载当前牌组
-        if (this.currentDeckId) await this.ensureDeckLoaded(this.currentDeckId)
-      } catch (e) {
-        this.error = e instanceof Error ? e.message : String(e)
-      } finally {
-        this.loading = false
+      if (!manifestPromise) {
+        this.loading = true
+        this.error = ''
+        manifestPromise = (async () => {
+          try {
+            const manifest = await fetchManifest()
+            this.staticDecks = (manifest.decks ?? []).map((d) => ({
+              id: String(d.id),
+              name: String(d.name),
+              deckFile: String(d.deckFile),
+              cardCount: Number(d.cardCount ?? 0),
+              isUserCreated: false
+            }))
+            // 清理 userDecks 中与静态牌组重复的 ID（以静态为准的场景不会出现，防御性处理）
+            const staticIds = new Set(this.staticDecks.map((d) => d.id))
+            this.userDecks = this.userDecks.filter((d) => !staticIds.has(d.id))
+            this.manifestLoaded = true
+          } catch (e) {
+            this.error = e instanceof Error ? e.message : String(e)
+            // 失败时重置 promise，允许后续调用重试
+            manifestPromise = null
+          } finally {
+            this.loading = false
+          }
+        })()
       }
+      await manifestPromise
+      if (!this.manifestLoaded) return // 加载失败（error 已记录）
+      // 选定当前牌组
+      if (!this.currentDeckId || !this.allDecks.some((d) => d.id === this.currentDeckId)) {
+        this.setCurrentDeck(this.allDecks[0]?.id ?? '')
+      }
+      // 预载当前牌组
+      if (this.currentDeckId) await this.ensureDeckLoaded(this.currentDeckId)
     },
 
     setCurrentDeck(deckId: string): void {
@@ -110,6 +121,9 @@ export const useDeckStore = defineStore('decks', {
 
     /** 确保牌组内容与学习数据已加载进内存 */
     async ensureDeckLoaded(deckId: string): Promise<void> {
+      // manifest 未加载时先完成初始化——例如首页 immediate watcher 早于 App onMounted 触发，
+      // 此时 staticDecks 尚为空，直接查 allDecks 会误判"未找到牌组"
+      if (!this.manifestLoaded) await this.init()
       if (!this.deckContents[deckId]) {
         const meta = this.allDecks.find((d) => d.id === deckId)
         if (!meta) throw new Error(`未找到牌组：${deckId}`)
