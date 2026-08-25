@@ -47,7 +47,7 @@ body {
 /* 主区域：桌面端为顶部导航让位 */
 .app-main {
   margin: 0 auto;
-  padding: calc(var(--c-nav-height) + 16px) 16px 16px;
+  padding: calc(var(--c-nav-height) + 16px) 16px 0px;
 }
 
 /* 沉浸式页面（卡片学习页）：全屏、无导航让位 */
@@ -414,7 +414,7 @@ html.dark .rich-editor .ql-toolbar .ql-picker {
 
 @media (max-width: 768px) {
   .app-main {
-    padding: 16px 16px calc(var(--c-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+    padding: 16px 16px calc(var(--q-nav-height) + env(safe-area-inset-bottom, 0px));
   }
 
   .app-main.immersive {
