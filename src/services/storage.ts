@@ -50,16 +50,23 @@ export function removeKey(key: string): void {
   localStorage.removeItem(PREFIX + key)
 }
 
-/** 简单防抖（用于会话变更 300ms 落盘） */
+/** 简单防抖（用于会话变更 300ms 落盘），带 cancel() 取消待执行的写入 */
 export function debounce<A extends unknown[]>(fn: (...args: A) => void, delay: number) {
   let timer: ReturnType<typeof setTimeout> | null = null
-  return (...args: A) => {
+  const debounced = (...args: A) => {
     if (timer !== null) clearTimeout(timer)
     timer = setTimeout(() => {
       timer = null
       fn(...args)
     }, delay)
   }
+  debounced.cancel = () => {
+    if (timer !== null) {
+      clearTimeout(timer)
+      timer = null
+    }
+  }
+  return debounced
 }
 
 /** 导出全站备份：收集所有 collector: 前缀键 */

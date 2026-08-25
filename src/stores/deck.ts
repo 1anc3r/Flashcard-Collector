@@ -8,9 +8,9 @@
 import { defineStore } from 'pinia'
 import type { Card, CardProgress, DeckFile, DeckMeta, Rating, StaticCard } from '@/types'
 import { fetchDeckFile, fetchManifest } from '@/services/service'
-import { KEYS, readJSON, removeKey, writeJSON, writeString, readString } from '@/utils/storage'
+import { KEYS, readJSON, removeKey, writeJSON, writeString, readString } from '@/services/storage'
 import { applyRating, defaultProgress } from '@/utils/sm2'
-import { nameToBaseId, uniqueId } from '@/utils/pinyin'
+import { nameToDeckId, uniqueDeckkId } from '@/utils/pinyin'
 
 interface DeckState {
   manifestLoaded: boolean
@@ -187,8 +187,8 @@ export const useDeckStore = defineStore('decks', {
 
     /** 由名称生成唯一牌组 ID（拼音全拼，截断 20 字符，冲突追加数字后缀） */
     suggestDeckId(name: string): string {
-      const base = nameToBaseId(name)
-      return uniqueId(base, this.allDecks.map((d) => d.id))
+      const base = nameToDeckId(name)
+      return uniqueDeckkId(base, this.allDecks.map((d) => d.id))
     },
 
     /** 新建牌组（用户牌组，写入 localStorage） */
@@ -324,7 +324,7 @@ export const useDeckStore = defineStore('decks', {
         cardIds: Array.isArray(obj.cardIds) ? obj.cardIds : [],
         cards: obj.cards as StaticCard[]
       })
-      const id = uniqueId(nameToBaseId(normalized.id || normalized.name) || 'deck', [
+      const id = uniqueDeckkId(nameToDeckId(normalized.id || normalized.name) || 'deck', [
         ...this.allDecks.map((d) => d.id),
         ...this.userDecks.map((d) => d.id)
       ])

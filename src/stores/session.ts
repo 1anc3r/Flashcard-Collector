@@ -6,7 +6,7 @@
  */
 import { defineStore } from 'pinia'
 import type { Rating, StudySession } from '@/types'
-import { KEYS, debounce, readJSON, writeJSON } from '@/utils/storage'
+import { KEYS, debounce, readJSON, removeKey, writeJSON } from '@/services/storage'
 import { uuid } from '@/utils/uuid'
 import { useDeckStore } from './deck'
 
@@ -186,6 +186,18 @@ export const useSessionStore = defineStore('sessions', {
       this.persistActive()
       this.flushNow()
       this.active = null
+    },
+
+    /**
+     * 丢弃全部会话（清理缓存场景）：
+     * 先取消待执行的防抖落盘，再清空内存状态并删除磁盘键，
+     * 否则清理后的 reload 会触发 beforeunload 强制落盘，把内存中的旧会话写回 localStorage。
+     */
+    discardAll(): void {
+      persistSessions.cancel()
+      this.active = null
+      this.sessions = {}
+      removeKey(KEYS.sessions)
     }
   }
 })

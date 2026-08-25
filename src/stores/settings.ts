@@ -4,7 +4,7 @@
  */
 import { defineStore } from 'pinia'
 import type { AppSettings } from '@/types'
-import { KEYS, readJSON, writeJSON } from '@/utils/storage'
+import { KEYS, readJSON, writeJSON } from '@/services/storage'
 
 function loadSettings(): AppSettings {
   const stored = readJSON<Partial<AppSettings>>(KEYS.settings, {})

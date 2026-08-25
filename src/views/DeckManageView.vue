@@ -5,11 +5,11 @@
  *     新建模式实时更新建议 ID，编辑模式 ID 不可变更。
  * (2) 卡片列表卡片：关键词查询（卡号 / 正面 / 背面 / 章节 / 标签），新增 / 编辑 / 删除 / 批量删除。
  */
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Delete, Plus, Search } from '@element-plus/icons-vue'
 import { useDeckStore } from '@/stores/deck'
-import { nameToBaseId } from '@/utils/pinyin'
+import { nameToDeckId } from '@/utils/pinyin'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'
 import CardFormDialog from '@/components/CardFormDialog.vue'
@@ -72,6 +72,16 @@ onMounted(async () => {
   window.addEventListener('resize', onResize)
 })
 
+/* ---------- 基本信息 ---------- */
+
+// 名称自动转拼音作为题库 ID
+watch(
+  () => deckForm.name,
+  (name) => {
+    if (isNewMode.value) deckForm.id = nameToDeckId(name)
+  }
+)
+
 let saveTimer: number | null = null
 
 /** 编辑模式：防抖自动持久化 */
@@ -80,7 +90,7 @@ function persist(): void {
   if (saveTimer !== null) window.clearTimeout(saveTimer)
   saveTimer = window.setTimeout(async () => {
     await onCreateBank()
-  const base = nameToBaseId(deckForm.name)
+  const base = nameToDeckId(deckForm.name)
   deckForm.id = base ? deckStore.suggestDeckId(deckForm.name) : ''
   }, 300)
 }

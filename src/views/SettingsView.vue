@@ -8,6 +8,7 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { useDeckStore } from '@/stores/deck'
+import { useSessionStore } from '@/stores/session'
 import { useSettingsStore } from '@/stores/settings'
 import {
   exportBackup,
@@ -15,10 +16,11 @@ import {
   downloadJSON,
   isBackupFile,
   clearAll
-} from '@/utils/storage'
+} from '@/services/storage'
 import type { DeckFile } from '@/types'
 
 const deckStore = useDeckStore()
+const sessionStore = useSessionStore()
 const settingsStore = useSettingsStore()
 const isMobile = ref(window.innerWidth <= 768)
 
@@ -129,13 +131,15 @@ async function onImportBackup(e: Event): Promise<void> {
 async function onClearCache(): Promise<void> {
   try {
     await ElMessageBox.confirm(
-      '将清空本浏览器内的全部应用数据（牌组编辑与本地新增牌组、错题本、收藏夹、做题记录、未完成会话与所有设置），且不可恢复。确定清理吗？',
+      '将清空本浏览器内的全部应用数据（牌组编辑与本地新增牌组、学习记录、未完成会话与所有设置），且不可恢复。确定清理吗？',
       '清理缓存',
       { type: 'error', confirmButtonText: '清空全部数据', cancelButtonText: '取消' }
     )
   } catch {
     return
   }
+  // 先丢弃内存中的会话并取消待执行的防抖落盘，否则刷新前的 beforeunload 强制落盘会把旧会话写回
+  sessionStore.discardAll()
   clearAll()
   ElMessage.success('缓存已清理，即将刷新页面')
   window.setTimeout(() => window.location.reload(), 800)
