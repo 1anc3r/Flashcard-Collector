@@ -6,7 +6,7 @@
  * (4) 学习卡片（继续上次学习 / 开始学习）；
  * (5) 牌组卡片（卡片列表，关键字实时过滤，点击进入卡片管理窗口）。
  */
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Edit, Plus, Search } from '@element-plus/icons-vue'
 import { useDeckStore } from '@/stores/deckStore'
@@ -19,6 +19,7 @@ import CardFormDialog from '@/components/CardFormDialog.vue'
 const router = useRouter()
 const deckStore = useDeckStore()
 const sessionStore = useSessionStore()
+const isMobile = ref(window.innerWidth <= 768)
 
 const keyword = ref('')
 
@@ -94,9 +95,18 @@ function openCardEditor(card: Card): void {
   editingCard.value = card
   cardDialogVisible.value = true
 }
+
+function onResize(): void {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(async () => {
+  window.addEventListener('resize', onResize)
+})
 </script>
 
 <template>
+  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 首页</span></div>
   <div class="app-content">
     <el-alert
       v-if="deckStore.error"

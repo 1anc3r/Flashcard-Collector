@@ -17,6 +17,7 @@ import CardFormDialog from '@/components/CardFormDialog.vue'
 const route = useRoute()
 const router = useRouter()
 const deckStore = useDeckStore()
+const isMobile = ref(window.innerWidth <= 768)
 
 /** 新增模式：无 deckId 路由参数 */
 const isNewMode = computed(() => route.name === 'deck-new')
@@ -48,6 +49,10 @@ const filteredCards = computed<Card[]>(() => {
   })
 })
 
+function onResize(): void {
+  isMobile.value = window.innerWidth <= 768
+}
+
 onMounted(async () => {
   if (!deckStore.manifestLoaded) await deckStore.init()
   if (isNewMode.value) {
@@ -64,6 +69,7 @@ onMounted(async () => {
     deckForm.name = meta.name
     deckForm.id = meta.id
   }
+  window.addEventListener('resize', onResize)
 })
 
 let saveTimer: number | null = null
@@ -158,6 +164,7 @@ async function deleteCardBatch(): Promise<void> {
 </script>
 
 <template>
+  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · {{ isNewMode ? '新增牌组' : '编辑牌组' }}</span></div>
   <div class="app-content">
     <el-card class="page-card" shadow="never">
       <div class="card-title">

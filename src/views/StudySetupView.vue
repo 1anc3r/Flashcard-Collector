@@ -16,12 +16,17 @@ const router = useRouter()
 const deckStore = useDeckStore()
 const settingsStore = useSettingsStore()
 const sessionStore = useSessionStore()
+const isMobile = ref(window.innerWidth <= 768)
 
 const total = computed(() => deckStore.currentCards.length)
 
 // 进入页面时从设置偏好恢复上次参数
 const mode = ref<'sequential' | 'shuffled'>(settingsStore.study.mode)
 const count = ref<number>(Math.min(settingsStore.study.count || 20, Math.max(1, total.value || 20)))
+
+function onResize(): void {
+  isMobile.value = window.innerWidth <= 768
+}
 
 onMounted(async () => {
   if (!deckStore.manifestLoaded) await deckStore.init()
@@ -34,6 +39,7 @@ onMounted(async () => {
   await deckStore.ensureDeckLoaded(deck.id)
   // 牌组变化后校正学习量上限
   if (count.value > total.value) count.value = Math.max(1, total.value)
+  window.addEventListener('resize', onResize)
 })
 
 function start(): void {
@@ -51,6 +57,7 @@ function start(): void {
 </script>
 
 <template>
+  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 学习设置</span></div>
   <div class="app-content">
     <el-card class="page-card" shadow="never">
       <div class="card-title">

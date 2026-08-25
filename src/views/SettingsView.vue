@@ -19,11 +19,17 @@ import type { DeckFile } from '@/types'
 
 const deckStore = useDeckStore()
 const settingsStore = useSettingsStore()
+const isMobile = ref(window.innerWidth <= 768)
 
 const currentDeck = computed(() => deckStore.currentDeck)
 
+function onResize(): void {
+  isMobile.value = window.innerWidth <= 768
+}
+
 onMounted(async () => {
   if (!deckStore.manifestLoaded) await deckStore.init()
+  window.addEventListener('resize', onResize)
 })
 
 /* ---- 外观偏好 ---- */
@@ -119,6 +125,7 @@ async function onRestoreBackupFile(e: Event): Promise<void> {
 </script>
 
 <template>
+  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 设置</span></div>
   <div class="app-content">
     <!-- (1) 外观偏好 -->
     <el-card class="page-card" shadow="never">

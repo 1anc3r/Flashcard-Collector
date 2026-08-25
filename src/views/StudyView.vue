@@ -189,10 +189,6 @@ const ratingButtons: Array<{ rating: Rating; label: string; color: string }> = [
           </el-button>
         </template>
       </div>
-
-      <div v-if="settingsStore.swipeEnabled" class="muted" style="margin-top: 16px">
-        支持手势：左滑下一卡，右滑上一卡
-      </div>
     </div>
   </div>
 </template>

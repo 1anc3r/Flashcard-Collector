@@ -4,13 +4,14 @@
  * - 支持展开 / 折叠查看学习明细：卡号、正面（纯文本摘要）、背面（纯文本摘要）、熟练度；
  * - 列表按最近学习 / 评分时间倒序排列（未学习的卡片排在最后）。
  */
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useDeckStore } from '@/stores/deckStore'
 import { PROFICIENCY_META } from '@/utils/sm2'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'
 
 const deckStore = useDeckStore()
+const isMobile = ref(window.innerWidth <= 768)
 
 const currentDeck = computed(() => deckStore.currentDeck)
 
@@ -30,6 +31,7 @@ const ratedCount = computed(() => records.value.filter((c) => c.lastReviewedAt).
 onMounted(async () => {
   if (!deckStore.manifestLoaded) await deckStore.init()
   if (currentDeck.value) await deckStore.ensureDeckLoaded(currentDeck.value.id)
+  window.addEventListener('resize', onResize)
 })
 
 function formatTime(iso: string | null): string {
@@ -38,9 +40,14 @@ function formatTime(iso: string | null): string {
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
+
+function onResize(): void {
+  isMobile.value = window.innerWidth <= 768
+}
 </script>
 
 <template>
+  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 学习记录</span></div>
   <div class="app-content">
     <el-card class="page-card" shadow="never">
       <div class="card-title">
