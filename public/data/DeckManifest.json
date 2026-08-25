@@ -1,0 +1,10 @@
+{
+  "decks": [
+    {
+      "id": "fund_law",
+      "name": "基金从业资格考试_基金基础知识与法律法规",
+      "deckFile": "Deck_fund_law.json",
+      "cardCount": 20
+    }
+  ]
+}
