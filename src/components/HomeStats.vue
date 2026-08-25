@@ -7,8 +7,8 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import type { ECharts, EChartsCoreOption } from 'echarts/core'
-import { useDeckStore } from '@/stores/deckStore'
-import { useSessionStore } from '@/stores/sessionStore'
+import { useDeckStore } from '@/stores/deck'
+import { useSessionStore } from '@/stores/session'
 import { PROFICIENCY_META } from '@/utils/sm2'
 import type { Proficiency } from '@/types'
 

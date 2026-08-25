@@ -7,13 +7,14 @@
  * (4) 导入导出：导出牌组 / 备份全站数据 / 导入牌组 / 恢复备份。
  */
 import { computed, onMounted, ref } from 'vue'
-import { useDeckStore } from '@/stores/deckStore'
-import { useSettingsStore } from '@/stores/settingsStore'
+import { useDeckStore } from '@/stores/deck'
+import { useSettingsStore } from '@/stores/settings'
 import {
-  collectBackup,
+  exportBackup,
+  importBackup,
   downloadJSON,
   isBackupFile,
-  restoreBackup
+  clearAll
 } from '@/utils/storage'
 import type { DeckFile } from '@/types'
 
@@ -69,14 +70,8 @@ async function onExportDeck(): Promise<void> {
   ElMessage.success(`已导出牌组：${deck.name}`)
 }
 
-/** 备份全站数据：导出包含所有 localStorage 数据的 JSON 文件 */
-function onExportBackup(): void {
-  downloadJSON(`collector_backup_${new Date().toISOString().slice(0, 10)}.json`, collectBackup())
-  ElMessage.success('全站备份已导出')
-}
-
 /** 导入牌组 JSON：自动注册到牌组索引并写入 localStorage */
-async function onImportDeckFile(e: Event): Promise<void> {
+async function onImportDeck(e: Event): Promise<void> {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = ''
@@ -96,8 +91,14 @@ async function onImportDeckFile(e: Event): Promise<void> {
   }
 }
 
+/** 备份全站数据：导出包含所有 localStorage 数据的 JSON 文件 */
+function onExportBackup(): void {
+  downloadJSON(`collector_backup_${new Date().toISOString().slice(0, 10)}.json`, exportBackup())
+  ElMessage.success('全站备份已导出')
+}
+
 /** 恢复备份：完全覆盖 localStorage 并刷新页面（不可逆，先确认） */
-async function onRestoreBackupFile(e: Event): Promise<void> {
+async function onImportBackup(e: Event): Promise<void> {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = ''
@@ -114,13 +115,30 @@ async function onRestoreBackupFile(e: Event): Promise<void> {
       '恢复备份',
       { type: 'warning', confirmButtonText: '覆盖并恢复', cancelButtonText: '取消' }
     )
-    restoreBackup(json)
+    importBackup(json)
     ElMessage.success('备份已恢复，页面即将刷新')
     setTimeout(() => window.location.reload(), 600)
   } catch (err) {
     if (err === 'cancel') return
     ElMessage.error(`恢复失败：${err instanceof Error ? err.message : String(err)}`)
   }
+}
+
+/* ---------- 清理缓存 ---------- */
+
+async function onClearCache(): Promise<void> {
+  try {
+    await ElMessageBox.confirm(
+      '将清空本浏览器内的全部应用数据（牌组编辑与本地新增牌组、错题本、收藏夹、做题记录、未完成会话与所有设置），且不可恢复。确定清理吗？',
+      '清理缓存',
+      { type: 'error', confirmButtonText: '清空全部数据', cancelButtonText: '取消' }
+    )
+  } catch {
+    return
+  }
+  clearAll()
+  ElMessage.success('缓存已清理，即将刷新页面')
+  window.setTimeout(() => window.location.reload(), 800)
 }
 </script>
 
@@ -192,15 +210,26 @@ async function onRestoreBackupFile(e: Event): Promise<void> {
         type="file"
         accept=".json,application/json"
         style="display: none"
-        @change="onImportDeckFile"
+        @change="onImportDeck"
       />
       <input
         ref="backupFileInput"
         type="file"
         accept=".json,application/json"
         style="display: none"
-        @change="onRestoreBackupFile"
+        @change="onImportBackup"
       />
+    </el-card>
+
+    <!-- 清理缓存 -->
+    <el-card class="page-card" shadow="never">
+      <div class="card-title"><span class="title-text">清理缓存</span></div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px">
+        <el-button type="danger" @click="onClearCache">清理缓存</el-button>
+      </div>
+      <el-alert type="warning" :closable="false" show-icon style="margin-top: 12px">
+        将清空本浏览器 localStorage 中保存的全部应用数据（牌组编辑与本地新增牌组、错题本、收藏夹、做题记录、未完成会话与所有设置），清理后自动刷新页面，且不可恢复。
+      </el-alert>
     </el-card>
   </div>
 </template>

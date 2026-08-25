@@ -7,9 +7,9 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AppNav from '@/components/AppNav.vue'
-import { useSettingsStore } from '@/stores/settingsStore'
-import { useDeckStore } from '@/stores/deckStore'
-import { registerBeforeUnloadFlush } from '@/stores/sessionStore'
+import { useSettingsStore } from '@/stores/settings'
+import { useDeckStore } from '@/stores/deck'
+import { registerBeforeUnloadFlush } from '@/stores/session'
 
 const route = useRoute()
 const settingsStore = useSettingsStore()

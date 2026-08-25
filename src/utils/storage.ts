@@ -3,7 +3,7 @@
  */
 import type { BackupFile } from '@/types'
 
-export const STORAGE_PREFIX = 'collector:'
+export const PREFIX = 'collector:'
 
 export const KEYS = {
   settings: 'settings',
@@ -16,7 +16,7 @@ export const KEYS = {
 
 export function readJSON<T>(key: string, fallback: T): T {
   try {
-    const raw = localStorage.getItem(STORAGE_PREFIX + key)
+    const raw = localStorage.getItem(PREFIX + key)
     if (raw === null) return fallback
     return JSON.parse(raw) as T
   } catch {
@@ -26,7 +26,7 @@ export function readJSON<T>(key: string, fallback: T): T {
 
 export function writeJSON(key: string, value: unknown): void {
   try {
-    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value))
+    localStorage.setItem(PREFIX + key, JSON.stringify(value))
   } catch (e) {
     // 存储超限等异常仅打印，不中断学习流程
     console.error('[collector] localStorage 写入失败:', key, e)
@@ -34,20 +34,20 @@ export function writeJSON(key: string, value: unknown): void {
 }
 
 export function readString(key: string, fallback: string): string {
-  const raw = localStorage.getItem(STORAGE_PREFIX + key)
+  const raw = localStorage.getItem(PREFIX + key)
   return raw === null ? fallback : raw
 }
 
 export function writeString(key: string, value: string): void {
   try {
-    localStorage.setItem(STORAGE_PREFIX + key, value)
+    localStorage.setItem(PREFIX + key, value)
   } catch (e) {
     console.error('[collector] localStorage 写入失败:', key, e)
   }
 }
 
 export function removeKey(key: string): void {
-  localStorage.removeItem(STORAGE_PREFIX + key)
+  localStorage.removeItem(PREFIX + key)
 }
 
 /** 简单防抖（用于会话变更 300ms 落盘） */
@@ -63,11 +63,11 @@ export function debounce<A extends unknown[]>(fn: (...args: A) => void, delay: n
 }
 
 /** 导出全站备份：收集所有 collector: 前缀键 */
-export function collectBackup(): BackupFile {
+export function exportBackup(): BackupFile {
   const data: Record<string, string> = {}
   for (let i = 0; i < localStorage.length; i++) {
     const fullKey = localStorage.key(i)
-    if (fullKey && fullKey.startsWith(STORAGE_PREFIX)) {
+    if (fullKey && fullKey.startsWith(PREFIX)) {
       data[fullKey] = localStorage.getItem(fullKey) ?? ''
     }
   }
@@ -80,15 +80,15 @@ export function collectBackup(): BackupFile {
 }
 
 /** 恢复全站备份：清空 collector: 前缀键后完全覆盖 */
-export function restoreBackup(backup: BackupFile): void {
+export function importBackup(backup: BackupFile): void {
   const toRemove: string[] = []
   for (let i = 0; i < localStorage.length; i++) {
     const fullKey = localStorage.key(i)
-    if (fullKey && fullKey.startsWith(STORAGE_PREFIX)) toRemove.push(fullKey)
+    if (fullKey && fullKey.startsWith(PREFIX)) toRemove.push(fullKey)
   }
   toRemove.forEach((k) => localStorage.removeItem(k))
   Object.entries(backup.data).forEach(([k, v]) => {
-    if (k.startsWith(STORAGE_PREFIX)) localStorage.setItem(k, v)
+    if (k.startsWith(PREFIX)) localStorage.setItem(k, v)
   })
 }
 
@@ -112,4 +112,14 @@ export function downloadJSON(filename: string, data: unknown): void {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+/** 清理缓存：移除 localStorage 中全部 collector: 前缀的应用数据 */
+export function clearAll(): void {
+  const keys: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)
+    if (k && k.startsWith(PREFIX)) keys.push(k)
+  }
+  keys.forEach((k) => localStorage.removeItem(k))
 }

@@ -8,7 +8,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Delete, Plus, Search } from '@element-plus/icons-vue'
-import { useDeckStore } from '@/stores/deckStore'
+import { useDeckStore } from '@/stores/deck'
 import { nameToBaseId } from '@/utils/pinyin'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'

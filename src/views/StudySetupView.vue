@@ -8,9 +8,9 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDeckStore } from '@/stores/deckStore'
-import { useSettingsStore } from '@/stores/settingsStore'
-import { useSessionStore } from '@/stores/sessionStore'
+import { useDeckStore } from '@/stores/deck'
+import { useSettingsStore } from '@/stores/settings'
+import { useSessionStore } from '@/stores/session'
 
 const router = useRouter()
 const deckStore = useDeckStore()
@@ -67,21 +67,24 @@ function start(): void {
 
       <el-form label-position="top" style="margin-top: 16px; max-width: 560px">
         <el-form-item :label="`当前牌组：${deckStore.currentDeck?.name ?? '—'}（共 ${total} 张卡片）`">
-          <el-select v-model="mode" style="width: 100%">
-            <el-option value="sequential" label="顺序学习模式" />
-            <el-option value="shuffled" label="乱序学习模式" />
-          </el-select>
         </el-form-item>
 
-        <el-form-item :label="`学习量：${count} 张（范围 1 ~ ${Math.max(1, total)}）`">
-          <el-slider
+        <el-form-item label="学习模式">
+          <el-radio-group
+            v-model="mode" style="width: 100%">
+            <el-radio-button value="sequential">顺序学习模式</el-radio-button>
+            <el-radio-button value="shuffled">乱序学习模式</el-radio-button>
+          </el-radio-group>
+          <div class="muted" style="margin-left: 12px">进入学习设置页时自动恢复</div>
+        </el-form-item>
+        <el-form-item label="学习量">
+          <el-input-number
             v-model="count"
             :min="1"
-            :max="Math.max(1, total)"
+            :max="9999"
             :step="1"
-            show-input
-            :show-input-controls="false"
           />
+          <div class="muted" style="margin-left: 12px">默认值 20，进入学习设置页时自动恢复</div>
         </el-form-item>
 
         <el-form-item>

@@ -7,7 +7,7 @@
  */
 import { defineStore } from 'pinia'
 import type { Card, CardProgress, DeckFile, DeckMeta, Rating, StaticCard } from '@/types'
-import { fetchDeckFile, fetchManifest } from '@/services/deckService'
+import { fetchDeckFile, fetchManifest } from '@/services/service'
 import { KEYS, readJSON, removeKey, writeJSON, writeString, readString } from '@/utils/storage'
 import { applyRating, defaultProgress } from '@/utils/sm2'
 import { nameToBaseId, uniqueId } from '@/utils/pinyin'

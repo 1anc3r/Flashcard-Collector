@@ -5,7 +5,7 @@
  * - 列表按最近学习 / 评分时间倒序排列（未学习的卡片排在最后）。
  */
 import { computed, onMounted, ref } from 'vue'
-import { useDeckStore } from '@/stores/deckStore'
+import { useDeckStore } from '@/stores/deck'
 import { PROFICIENCY_META } from '@/utils/sm2'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'
