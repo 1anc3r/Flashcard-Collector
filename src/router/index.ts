@@ -10,29 +10,27 @@ import DeckManageView from '@/views/DeckManageView.vue'
 import StudySetupView from '@/views/StudySetupView.vue'
 import StudyView from '@/views/StudyView.vue'
 
-// 必须使用 hash 模式：GitHub Pages 为纯静态托管，history 模式刷新会 404
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { path: '/', name: 'home', component: () => HomeView, meta: { title: '首页' } },
-    { path: '/records', name: 'records', component: () => RecordsView, meta: { title: '记录' } },
-    { path: '/settings', name: 'settings', component: () => SettingsView, meta: { title: '设置' } },
-    { path: '/deck/new', name: 'deck-new', component: () => DeckManageView, meta: { title: '牌组管理' } },
-    { path: '/deck/:deckId', name: 'deck-edit', component: () => DeckManageView, meta: { title: '牌组管理' } , props: true },
-    { path: '/setup', name: 'study-setup', component: () => StudySetupView, meta: { title: '学习设置' } },
+    { path: '/', name: 'home', component: HomeView },
+    { path: '/records', name: 'records', component: RecordsView },
+    { path: '/settings', name: 'settings', component: SettingsView },
+    // 牌组管理页：新增模式 / 编辑模式共用同一 View
+    { path: '/deck/new', name: 'deck-new', component: DeckManageView },
+    { path: '/deck/:deckId', name: 'deck-edit', component: DeckManageView, props: true },
+    // 学习设置页（记住上次参数，自动恢复）
+    { path: '/setup', name: 'study-setup', component: StudySetupView },
+    // 卡片学习页：凭 sessionId 从本地存储恢复完整会话，不通过路由传配置
     {
       path: '/study/:sessionId',
       name: 'study',
-      component: () => StudyView,
+      component: StudyView,
       props: true,
       meta: { immersive: true }
     },
     { path: '/:pathMatch(.*)*', redirect: '/' }
   ]
 })
-
-// router.afterEach((to) => {
-//   document.title = to.meta.title ? `Collector · ${String(to.meta.title)}` : 'Collector · 闪卡收藏家'
-// })
 
 export default router
