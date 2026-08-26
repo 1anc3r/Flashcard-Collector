@@ -50,8 +50,9 @@ body {
   padding: calc(var(--c-nav-height) + 16px) 16px 0px;
 }
 
-/* 沉浸式页面（卡片学习页）：全屏、无导航让位 */
+/* 沉浸式页面：全屏、无导航让位 */
 .app-main.immersive {
+  max-width: none;
   padding: 0;
 }
 
@@ -114,11 +115,13 @@ body {
 }
 
 .font-standard .flash-content,
+
 .font-standard .rich-text {
   font-size: 16px;
 }
 
 .font-large .flash-content,
+
 .font-large .rich-text {
   font-size: 19px;
 }
@@ -195,6 +198,33 @@ body {
 
 .rich-text p {
   margin: 0 0 6px;
+}
+
+/* 表格：外层包裹横向滚动容器，移动端窄屏下可左右滑动查看完整表格，避免截断 */
+.rich-text .table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 0 6px;
+}
+
+.rich-text table {
+  border-collapse: collapse;
+  /* 保持 table 自身布局（display: table），宽度按内容自然伸展，超出部分由 .table-scroll 滚动 */
+  width: max-content;
+  min-width: 100%;
+}
+
+.rich-text th,
+.rich-text td {
+  border: 1px solid var(--c-border);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.rich-text th {
+  background: var(--c-bg);
 }
 
 /* ========== 富文本编辑器 ========== */

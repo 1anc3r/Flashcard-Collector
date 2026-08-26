@@ -12,12 +12,33 @@ const props = defineProps<{ content: string }>()
 
 const el = ref<HTMLElement>()
 
+function isHtml(s: string): boolean {
+  return /<\w+[^>]*>/.test(s)
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 async function render(): Promise<void> {
   await nextTick()
   const root = el.value
   if (!root) return
   const content = props.content ?? ''
   root.innerHTML = isHtml(content) ? content : escapeHtml(content).replace(/\n/g, '<br>')
+  // 表格横向滚动包裹：移动端窄屏下表格宽度超过容器时，可左右滑动查看，而不是被截断
+  root.querySelectorAll('table').forEach((table) => {
+    if (table.parentElement?.classList.contains('table-scroll')) return
+    const wrap = document.createElement('div')
+    wrap.className = 'table-scroll'
+    table.parentNode?.insertBefore(wrap, table)
+    wrap.appendChild(table)
+  })
   root.querySelectorAll('span.ql-formula').forEach((node) => {
     const value = node.getAttribute('data-value') ?? ''
     try {

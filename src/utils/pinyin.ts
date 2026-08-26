@@ -16,11 +16,9 @@ export function nameToDeckId(name: string): string {
 }
 
 /** 在已有 ID 集合中生成唯一 ID：基础 ID 冲突时追加 _1、_2 ... 直至唯一 */
-export function uniqueDeckkId(baseId: string, existingIds: Iterable<string>): string {
-  const existing = new Set(existingIds)
-  const base = baseId || 'deck'
-  if (!existing.has(base)) return base
-  let i = 1
-  while (existing.has(`${base}_${i}`)) i++
-  return `${base}_${i}`
+export function uniqueDeckkId(baseId: string, existingIds: string[]): string {
+  if (!existingIds.includes(baseId)) return baseId
+  let i = 2
+  while (existingIds.includes(`${baseId}_${i}`)) i++
+  return `${baseId}_${i}`
 }

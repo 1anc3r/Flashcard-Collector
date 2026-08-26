@@ -201,8 +201,7 @@ export const useDeckStore = defineStore('decks', {
 
     /** 由名称生成唯一牌组 ID（拼音全拼，截断 20 字符，冲突追加数字后缀） */
     suggestDeckId(name: string): string {
-      const base = nameToDeckId(name)
-      return uniqueDeckkId(base, this.allDecks.map((d) => d.id))
+      return uniqueDeckkId(nameToDeckId(name), this.allDecks.map((d) => d.id))
     },
 
     /** 新建牌组（用户牌组，写入 localStorage） */

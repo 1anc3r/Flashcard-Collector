@@ -93,8 +93,8 @@ onMounted(() => {
       }
     }
   })
-  if (props.modelValue) editor.root.innerHTML = props.modelValue
-  editor.on('text-change', () => {
+  if (props.modelValue) editor!.root.innerHTML = props.modelValue
+  editor!.on('text-change', () => {
     internalChange = true
     checkPastedImages()
     emit('update:modelValue', editor!.root.innerHTML)
