@@ -12,7 +12,7 @@ import StudyView from '@/views/StudyView.vue'
 
 // 必须使用 hash 模式：GitHub Pages 为纯静态托管，history 模式刷新会 404
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     { path: '/', name: 'home', component: () => HomeView, meta: { title: '首页' } },
     { path: '/records', name: 'records', component: () => RecordsView, meta: { title: '记录' } },
@@ -23,7 +23,7 @@ const router = createRouter({
     {
       path: '/study/:sessionId',
       name: 'study',
-      component: StudyView,
+      component: () => StudyView,
       props: true,
       meta: { immersive: true }
     },
