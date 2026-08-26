@@ -8,7 +8,7 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Delete, Plus, Search } from '@element-plus/icons-vue'
-import { useDeckStore } from '@/stores/deck'
+import { useDeckStore } from '@/stores/deckStore'
 import { nameToDeckId } from '@/utils/pinyin'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'
@@ -188,8 +188,8 @@ async function deleteCardBatch(): Promise<void> {
 </script>
 
 <template>
-  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · {{ isNewMode ? '新增牌组' : '编辑牌组' }}</span></div>
   <div class="app-content">
+    <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · {{ isNewMode ? '新增牌组' : '编辑牌组' }}</span></div>
     <el-card class="page-card" shadow="never">
       <div class="card-title">
         <span class="title-text">{{ isNewMode ? '新增牌组' : '编辑牌组' }}</span>

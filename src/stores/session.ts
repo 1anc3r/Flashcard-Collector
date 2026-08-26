@@ -8,7 +8,7 @@ import { defineStore } from 'pinia'
 import type { Rating, StudySession } from '@/types'
 import { KEYS, debounce, readJSON, removeKey, writeJSON } from '@/services/storage'
 import { uuid } from '@/utils/uuid'
-import { useDeckStore } from './deck'
+import { useDeckStore } from './deckStore'
 
 type SessionMap = Record<string, StudySession>
 

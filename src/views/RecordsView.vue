@@ -5,7 +5,7 @@
  * - 列表按最近学习 / 评分时间倒序排列（未学习的卡片排在最后）。
  */
 import { computed, onMounted, ref, watch } from 'vue'
-import { useDeckStore } from '@/stores/deck'
+import { useDeckStore } from '@/stores/deckStore'
 import { PROFICIENCY_META } from '@/utils/sm2'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'
@@ -61,8 +61,8 @@ function onResize(): void {
 </script>
 
 <template>
-  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 学习记录</span></div>
   <div class="app-content">
+    <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 学习记录</span></div>
     <el-card class="page-card" shadow="never">
       <div class="card-title">
         <span class="title-text">

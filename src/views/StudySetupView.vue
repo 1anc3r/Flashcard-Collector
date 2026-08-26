@@ -8,7 +8,7 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDeckStore } from '@/stores/deck'
+import { useDeckStore } from '@/stores/deckStore'
 import { useSettingsStore } from '@/stores/settings'
 import { useSessionStore } from '@/stores/session'
 
@@ -57,8 +57,8 @@ function start(): void {
 </script>
 
 <template>
-  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 学习设置</span></div>
   <div class="app-content">
+    <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 学习设置</span></div>
     <el-card class="page-card" shadow="never">
       <div class="card-title">
         <span class="title-text">学习设置</span>

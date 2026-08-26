@@ -9,7 +9,7 @@ import { useRoute } from 'vue-router'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import AppNav from '@/components/AppNav.vue'
 import { useSettingsStore } from '@/stores/settings'
-import { useDeckStore } from '@/stores/deck'
+import { useDeckStore } from '@/stores/deckStore'
 import { registerBeforeUnloadFlush } from '@/stores/session'
 
 const route = useRoute()

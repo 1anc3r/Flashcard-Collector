@@ -9,7 +9,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Edit, Plus, Search } from '@element-plus/icons-vue'
-import { useDeckStore } from '@/stores/deck'
+import { useDeckStore } from '@/stores/deckStore'
 import { useSessionStore } from '@/stores/session'
 import { summarize } from '@/utils/text'
 import type { Card } from '@/types'
@@ -121,8 +121,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 首页</span></div>
   <div class="app-content">
+    <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 首页</span></div>
     <el-alert
       v-if="deckStore.error"
       type="error"

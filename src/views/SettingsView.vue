@@ -8,7 +8,7 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { Link } from '@element-plus/icons-vue'
-import { useDeckStore } from '@/stores/deck'
+import { useDeckStore } from '@/stores/deckStore'
 import { useSessionStore } from '@/stores/session'
 import { useSettingsStore } from '@/stores/settings'
 import {
@@ -154,8 +154,8 @@ const redirectToExternalLink = () => {
 </script>
 
 <template>
-  <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 设置</span></div>
   <div class="app-content">
+    <div v-if="isMobile" class="brand" style="margin-bottom: 16px;">Collector<span>闪卡收藏家 · 设置</span></div>
     <!-- (1) 外观偏好 -->
     <el-card class="page-card" shadow="never">
       <div class="card-title"><span class="title-text">外观偏好</span></div>

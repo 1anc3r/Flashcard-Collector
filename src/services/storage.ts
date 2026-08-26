@@ -28,7 +28,7 @@ export function writeJSON(key: string, value: unknown): void {
   try {
     localStorage.setItem(PREFIX + key, JSON.stringify(value))
   } catch (e) {
-    // 存储超限等异常仅打印，不中断学习流程
+    // 容量溢出等场景：控制台告警，避免应用崩溃
     console.error('[collector] localStorage 写入失败:', key, e)
   }
 }
@@ -69,13 +69,16 @@ export function debounce<A extends unknown[]>(fn: (...args: A) => void, delay: n
   return debounced
 }
 
-/** 导出全站备份：收集所有 collector: 前缀键 */
+/** 导出全站应用数据（备份） */
 export function exportBackup(): BackupFile {
   const data: Record<string, string> = {}
   for (let i = 0; i < localStorage.length; i++) {
     const fullKey = localStorage.key(i)
     if (fullKey && fullKey.startsWith(PREFIX)) {
-      data[fullKey] = localStorage.getItem(fullKey) ?? ''
+      try {
+        data[fullKey] = JSON.parse(localStorage.getItem(fullKey) as string)
+      } catch {
+        /* 跳过损坏项 */
     }
   }
   return {

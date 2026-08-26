@@ -19,7 +19,6 @@ const currentPath = computed(() => route.path)
 
 function isActive(path: string): boolean {
   if (path === '/') {
-    // 首页入口同时覆盖牌组管理 / 学习设置 / 学习页等相关路由
     return (
       currentPath.value === '/' ||
       currentPath.value.startsWith('/deck') ||

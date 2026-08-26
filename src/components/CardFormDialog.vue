@@ -6,7 +6,7 @@
  */
 import { computed, reactive, ref, watch } from 'vue'
 import type { Card } from '@/types'
-import { useDeckStore } from '@/stores/deck.js'
+import { useDeckStore } from '@/stores/deckStore.js'
 import RichEditor from './RichEditor.vue'
 
 const props = defineProps<{
