@@ -79,6 +79,7 @@ export function exportBackup(): BackupFile {
         data[fullKey] = JSON.parse(localStorage.getItem(fullKey) as string)
       } catch {
         /* 跳过损坏项 */
+      }
     }
   }
   return {
