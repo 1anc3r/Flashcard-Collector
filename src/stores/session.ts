@@ -62,11 +62,27 @@ export const useSessionStore = defineStore('sessions', {
       return candidates[0]
     },
 
-    /** 创建新会话并立即落盘 */
-    createSession(deckId: string, mode: 'sequential' | 'shuffled', count: number): StudySession {
+    /**
+     * 创建新会话并立即落盘。
+     * filter 为章节 / 标签筛选：空数组表示不限；两者同时设置时取交集。
+     */
+    createSession(
+      deckId: string,
+      mode: 'sequential' | 'shuffled',
+      count: number,
+      filter?: { chapters?: string[]; tags?: string[] }
+    ): StudySession {
       const deckStore = useDeckStore()
-      const allIds = deckStore.getCards(deckId).map((c) => c.id)
-      let cardIds = [...allIds]
+      const chapters = filter?.chapters ?? []
+      const tags = filter?.tags ?? []
+      let cardIds = deckStore
+        .getCards(deckId)
+        .filter((c) => {
+          if (chapters.length > 0 && !chapters.includes(c.chapter)) return false
+          if (tags.length > 0 && !c.tags.some((t) => tags.includes(t))) return false
+          return true
+        })
+        .map((c) => c.id)
       if (mode === 'shuffled') {
         // Fisher-Yates 洗牌
         for (let i = cardIds.length - 1; i > 0; i--) {

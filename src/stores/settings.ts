@@ -3,7 +3,7 @@
  * 全部持久化到 localStorage，并在变更时即时落盘 + 应用到 DOM。
  */
 import { defineStore } from 'pinia'
-import type { AppSettings } from '@/types'
+import type { AppSettings, StudyParams } from '@/types'
 import { KEYS, readJSON, writeJSON } from '@/services/storage'
 
 function loadSettings(): AppSettings {
@@ -18,7 +18,9 @@ function loadSettings(): AppSettings {
       count:
         typeof stored.study?.count === 'number' && stored.study.count >= 1
           ? Math.floor(stored.study.count)
-          : 20
+          : 20,
+      chapters: Array.isArray(stored.study?.chapters) ? stored.study.chapters.map(String) : [],
+      tags: Array.isArray(stored.study?.tags) ? stored.study.tags.map(String) : []
     }
   }
 }
@@ -63,9 +65,15 @@ export const useSettingsStore = defineStore('settings', {
       this.swipeEnabled = enabled
       this.persist()
     },
-    /** 记住学习设置页的全部参数（学习模式、学习量） */
-    setStudyParams(params: { mode: 'sequential' | 'shuffled'; count: number }): void {
-      this.study = { mode: params.mode, count: Math.max(1, Math.floor(params.count)) }
+    /** 记住学习设置页的全部参数（学习模式、学习量、章节 / 标签筛选）；部分更新，未传字段保持原值 */
+    setStudyParams(params: Partial<StudyParams>): void {
+      this.study = {
+        mode: params.mode ?? this.study.mode,
+        count:
+          params.count !== undefined ? Math.max(1, Math.floor(params.count)) : this.study.count,
+        chapters: params.chapters ?? this.study.chapters,
+        tags: params.tags ?? this.study.tags
+      }
       this.persist()
     }
   }

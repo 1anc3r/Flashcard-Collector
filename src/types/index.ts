@@ -84,15 +84,20 @@ export interface StudySession {
   isCompleted: boolean
 }
 
+/** 学习设置页参数（每次进入自动恢复） */
+export interface StudyParams {
+  mode: 'sequential' | 'shuffled'
+  count: number // 学习量，默认 20
+  chapters: string[] // 章节筛选（空数组 = 不限）
+  tags: string[] // 标签筛选（空数组 = 不限）
+}
+
 /** 用户设置偏好 */
 export interface AppSettings {
   theme: 'light' | 'dark'
   fontSize: 'small' | 'standard' | 'large'
   swipeEnabled: boolean // 滑动切卡开关，默认开启
-  study: {
-    mode: 'sequential' | 'shuffled'
-    count: number // 学习量，默认 20
-  }
+  study: StudyParams
 }
 
 /** 全站备份文件结构 */
