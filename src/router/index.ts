@@ -27,9 +27,9 @@ const router = createRouter({
   ]
 })
 
-router.afterEach((to) => {
-  document.title = to.meta.title ? `Collector · ${String(to.meta.title)}` : 'Collector · 闪卡收藏家'
-})
+// router.afterEach((to) => {
+//   document.title = to.meta.title ? `Collector · ${String(to.meta.title)}` : 'Collector · 闪卡收藏家'
+// })
 
 
 export default router
